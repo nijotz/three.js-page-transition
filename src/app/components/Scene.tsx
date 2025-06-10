@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
 
-function RotatingCube() {
+function RotatingCube({ color }) {
   const meshRef = useRef<Mesh>(null);
 
   useFrame((state, delta) => {
@@ -17,17 +17,18 @@ function RotatingCube() {
   return (
     <mesh ref={meshRef}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#4f46e5" />
+      <meshStandardMaterial color={color || "#4f46e5"} />
     </mesh>
   );
 }
 
-function Scene() {
+function Scene({ color }) {
   return (
     <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+      <color attach="background" args={['lightgray']} />
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <RotatingCube />
+      <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
+      <RotatingCube color={color} />
     </Canvas>
   );
 }

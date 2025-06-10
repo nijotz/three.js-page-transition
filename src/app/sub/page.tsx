@@ -8,7 +8,7 @@ export default function Sub() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="text-center py-2">
+      <div className="text-left p-8">
         <h1 className="text-4xl font-bold text-gray-900">Sub Page</h1>
       </div>
       <div className="flex-1">
