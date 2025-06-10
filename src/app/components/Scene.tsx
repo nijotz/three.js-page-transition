@@ -22,7 +22,7 @@ function RotatingCube() {
   );
 }
 
-export default function Scene() {
+function Scene() {
   return (
     <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
       <ambientLight intensity={0.5} />
@@ -31,3 +31,5 @@ export default function Scene() {
     </Canvas>
   );
 }
+
+export default Scene;
