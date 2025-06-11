@@ -19,8 +19,8 @@ export default function Home() {
       <div className="text-left p-8">
         <h1 className="text-4xl font-bold text-gray-900">Home</h1>
       </div>
-      <div className="flex-1 flex h-full p-8 gap-8">
-        <div className="h-full flex-grow rounded-lg overflow-hidden">
+      <div className="flex-grow min-h-0 overflow-auto flex p-8 gap-8">
+        <div className="flex-grow rounded-lg overflow-hidden">
           <OutPortal node={portalNode} color={selectedColor} />
         </div>
         <div className="p-8 border rounded-2xl h-auto self-start">
