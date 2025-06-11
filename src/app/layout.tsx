@@ -23,7 +23,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const portalNode = useMemo(() => createHtmlPortalNode({ attributes: { class: "h-full" } }), [])
+  const portalNode = useMemo(() => createHtmlPortalNode({ attributes: { class: "h-full w-full" } }), [])
 
   return (
     <html lang="en">

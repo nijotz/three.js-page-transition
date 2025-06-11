@@ -3,6 +3,7 @@
 import { OutPortal } from 'react-reverse-portal'
 import { usePortalContext } from "@/app/context/PortalContext";
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const portalNode = usePortalContext();
@@ -20,9 +21,13 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-gray-900">Home</h1>
       </div>
       <div className="flex-grow min-h-0 overflow-auto flex p-8 gap-8">
-        <div className="flex-grow rounded-lg overflow-hidden">
+        <motion.div
+          className="flex-grow rounded-lg overflow-hidden"
+          layoutId="canvas"
+          transition={{ duration: 0.4 }}
+        >
           <OutPortal node={portalNode} color={selectedColor} />
-        </div>
+        </motion.div>
         <div className="p-8 border rounded-2xl h-auto self-start">
           <h2 className="text-xl">Controls</h2>
           <div className="space-y-4 mt-4 px-4">
