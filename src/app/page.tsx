@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from "react";
 import { OutPortal } from 'react-reverse-portal'
 import { motion } from 'framer-motion';
 import { useAppContext } from "@/app/context";

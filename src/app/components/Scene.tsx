@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
 import { useAppContext } from "@/app/context";
@@ -25,29 +25,51 @@ function RotatingCube({ color }: { color: string }) {
 
 function Scene({ color }: { color: string }) {
   const canvasRef = useRef(null);
-  let width = "100%";
-  let height = "100%";
+  const { transition } = useAppContext();
+  const frameRef = useRef<number | null>(null);
+  const sizeRef = useRef("100%");
 
-  const update = () => {
-    if (!canvasRef?.current) return
+  // I can't find a way to trigger resizing the canvas with react-three-fiber.
+  // It uses react-use-measure which uses a ResizeObserver. I was trying to
+  // programmatically have the Canvas resize during framer motion transitions,
+  // but nothing worked. So I'm triggering a re-render by slightly changing the
+  // size of the element...
+  const jiggle = useCallback(() => {
+    if (!canvasRef?.current) return null
     const elem = canvasRef.current as HTMLCanvasElement;
 
-    if (width === "100%") {
-      width = "100.01%"
-      height = "100.01%"
+    if (sizeRef.current === "100%") {
+      sizeRef.current = "100.01%";
     } else {
-      width = "100%"
-      height = "100%"
+      sizeRef.current = "100%";
     }
 
-    elem.style.width = width;
-    elem.style.height = height;
+    elem.style.width = sizeRef.current;
+    elem.style.height = sizeRef.current;
 
-    setTimeout(update, 0);
-    console.log('update')
-  }
+    frameRef.current = requestAnimationFrame(jiggle);
+  }, []);
 
-  update();
+  useEffect(() => {
+    if (transition) {
+      // Start animation loop when transitioning
+      frameRef.current = requestAnimationFrame(jiggle);
+    } else {
+      // Cancel animation loop when done transitioning
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current)
+      }
+      frameRef.current = null;
+    }
+
+    // Cancel animation on unmount
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    }
+  }, [jiggle, transition]);
 
   return (
     <Canvas ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }}>
