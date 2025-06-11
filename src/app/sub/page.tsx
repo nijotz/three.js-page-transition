@@ -5,7 +5,7 @@ import { useAppContext } from "@/app/context";
 import { motion } from 'framer-motion';
 
 export default function Sub() {
-  const { portalNode } = useAppContext();
+  const { portalNode, setTransition } = useAppContext();
 
   return (
     <div className="flex flex-col h-full">
@@ -17,6 +17,8 @@ export default function Sub() {
           className="flex-grow bg-gray-100 overflow-hidden"
           layoutId="canvas"
           transition={{ duration: 0.4 }}
+          onLayoutAnimationStart={() => setTransition(true)}
+          onLayoutAnimationComplete={() => setTransition(false)}
         >
           <OutPortal node={portalNode} />
         </motion.div>

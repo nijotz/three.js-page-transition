@@ -3,12 +3,12 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
-import { motion } from 'framer-motion';
+import { useAppContext } from "@/app/context";
 
 function RotatingCube({ color }: { color: string }) {
   const meshRef = useRef<Mesh>(null);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (meshRef.current) {
       meshRef.current.rotation.x += delta * 0.5;
       meshRef.current.rotation.y += delta * 0.2;
@@ -50,7 +50,7 @@ function Scene({ color }: { color: string }) {
   update();
 
   return (
-    <Canvas ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }} style={{ width, height }}>
+    <Canvas ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }}>
       <color attach="background" args={['lightgray']} />
       <ambientLight intensity={0.5} />
       <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />

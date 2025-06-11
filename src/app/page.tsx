@@ -1,12 +1,12 @@
 'use client'
 
 import { OutPortal } from 'react-reverse-portal'
-import { useAppContext } from "@/app/context";
 import { motion } from 'framer-motion';
+import { useAppContext } from "@/app/context";
 import { ColorOption, ColorValue } from './types';
 
 export default function Home() {
-  const { portalNode, color: selectedColor, setColor } = useAppContext();
+  const { portalNode, color: selectedColor, setColor, setTransition } = useAppContext();
 
   const colors: ColorOption[] = [
     { value: 'blue', label: 'Blue', color: 'bg-blue-500' },
@@ -24,6 +24,8 @@ export default function Home() {
           className="flex-grow rounded-lg overflow-hidden"
           layoutId="canvas"
           transition={{ duration: 0.4 }}
+          onLayoutAnimationStart={() => setTransition(true)}
+          onLayoutAnimationComplete={() => setTransition(false)}
         >
           <OutPortal node={portalNode} />
         </motion.div>

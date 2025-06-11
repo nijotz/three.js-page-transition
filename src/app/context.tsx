@@ -8,6 +8,8 @@ interface AppContextType {
   portalNode: HtmlPortalNode;
   color: ColorValue;
   setColor: (color: ColorValue) => void;
+  transition: boolean;
+  setTransition: (arg0: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -15,9 +17,10 @@ const AppContext = createContext<AppContextType | null>(null);
 export function AppContextProvider({ children }: { children: ReactNode }) {
   const portalNode = useMemo(() => createHtmlPortalNode({ attributes: { class: "h-full w-full" } }), []);
   const [color, setColor] = useState<ColorValue>('blue');
+  const [transition, setTransition] = useState<boolean>(false);
 
   return (
-    <AppContext.Provider value={{ portalNode, color, setColor }}>
+    <AppContext.Provider value={{ portalNode, color, setColor, transition, setTransition }}>
       {children}
     </AppContext.Provider>
   );
