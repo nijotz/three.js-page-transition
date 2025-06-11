@@ -1,9 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
 import { Geist, Geist_Mono } from "next/font/google";
-import { createHtmlPortalNode, InPortal } from 'react-reverse-portal'
-import { PortalContext } from "@/app/context/PortalContext";
+import { InPortal } from 'react-reverse-portal'
+import { useAppContext, AppContextProvider } from "@/app/context";
 import Toolbar from "@/app/components/Toolbar";
 import Scene from '@/app/components/Scene';
 import "./globals.css";
@@ -23,25 +22,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const portalNode = useMemo(() => createHtmlPortalNode({ attributes: { class: "h-full w-full" } }), [])
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PortalContext.Provider value={portalNode}>
-          <Toolbar />
-
-          <InPortal node={portalNode}>
-            <Scene />
-          </InPortal>
-
-          <main className="h-[calc(100vh-4rem)]">
+        <AppContextProvider>
+          <App>
             {children}
-          </main>
-        </PortalContext.Provider>
+          </App>
+        </AppContextProvider>
       </body>
     </html>
+  );
+}
+
+function App({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { color, portalNode } = useAppContext();
+
+  return (
+    <>
+      <Toolbar />
+
+      <InPortal node={portalNode}>
+        <Scene color={color} />
+      </InPortal>
+
+      <main className="h-[calc(100vh-4rem)]">
+        {children}
+      </main>
+    </>
   );
 }

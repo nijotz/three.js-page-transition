@@ -5,7 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
 import { motion } from 'framer-motion';
 
-function RotatingCube({ color }) {
+function RotatingCube({ color }: { color: string }) {
   const meshRef = useRef<Mesh>(null);
 
   useFrame((state, delta) => {
@@ -23,13 +23,14 @@ function RotatingCube({ color }) {
   );
 }
 
-function Scene({ color }) {
+function Scene({ color }: { color: string }) {
   const canvasRef = useRef(null);
   let width = "100%";
   let height = "100%";
 
   const update = () => {
-    if (!canvasRef.current) return;
+    if (!canvasRef?.current) return
+    const elem = canvasRef.current as HTMLCanvasElement;
 
     if (width === "100%") {
       width = "100.01%"
@@ -39,8 +40,8 @@ function Scene({ color }) {
       height = "100%"
     }
 
-    canvasRef.current.style.width = width;
-    canvasRef.current.style.height = height;
+    elem.style.width = width;
+    elem.style.height = height;
 
     setTimeout(update, 0);
     console.log('update')

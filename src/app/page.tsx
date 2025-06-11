@@ -1,15 +1,14 @@
 'use client'
 
 import { OutPortal } from 'react-reverse-portal'
-import { usePortalContext } from "@/app/context/PortalContext";
-import { useState } from 'react';
+import { useAppContext } from "@/app/context";
 import { motion } from 'framer-motion';
+import { ColorOption, ColorValue } from './types';
 
 export default function Home() {
-  const portalNode = usePortalContext();
-  const [selectedColor, setSelectedColor] = useState('blue');
+  const { portalNode, color: selectedColor, setColor } = useAppContext();
 
-  const colors = [
+  const colors: ColorOption[] = [
     { value: 'blue', label: 'Blue', color: 'bg-blue-500' },
     { value: 'green', label: 'Green', color: 'bg-green-500' },
     { value: 'purple', label: 'Purple', color: 'bg-purple-500' },
@@ -26,7 +25,7 @@ export default function Home() {
           layoutId="canvas"
           transition={{ duration: 0.4 }}
         >
-          <OutPortal node={portalNode} color={selectedColor} />
+          <OutPortal node={portalNode} />
         </motion.div>
         <div className="p-8 border rounded-2xl h-auto self-start">
           <h2 className="text-xl">Controls</h2>
@@ -39,7 +38,7 @@ export default function Home() {
                   name="color"
                   value={color.value}
                   checked={selectedColor === color.value}
-                  onChange={(e) => setSelectedColor(e.target.value)}
+                  onChange={(e) => setColor(e.target.value as ColorValue)}
                   className="form-radio h-4 w-4 text-blue-600"
                 />
                 <span className="flex items-center">
