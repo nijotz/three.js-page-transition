@@ -5,6 +5,7 @@ import { useFrame, useThree, createRoot, events, extend } from '@react-three/fib
 import { Mesh, PerspectiveCamera } from 'three';
 import * as THREE from 'three'
 import { useAppStore } from '@/app/store';
+
 extend(THREE);
 
 function RotatingCube({ color }: { color: string }) {
@@ -25,26 +26,30 @@ function RotatingCube({ color }: { color: string }) {
   );
 }
 
-function Resizer({ canvasRef }) {
+function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> | null }) {
   const { transition } = useAppStore();
   const { gl, camera } = useThree();
   const frameRef = useRef<number | null>(null);
 
   const resize = useCallback(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef?.current) return;
+
     const parent = canvasRef.current.parentElement;
+    if (!parent) return;
+
     const { width, height } = parent.getBoundingClientRect();
     (camera as PerspectiveCamera).aspect = width / height;
     camera.updateProjectionMatrix();
     canvasRef.current.style.width = "100%";
     canvasRef.current.style.height = "100%";
     frameRef.current = requestAnimationFrame(resize);
-  }, [transition]);
+  }, [camera, canvasRef]);
 
   useEffect(() => {
     if (transition) {
       frameRef.current = requestAnimationFrame(resize);
     } else {
+      if (!canvasRef?.current) return;
       const { width, height } = canvasRef.current.getBoundingClientRect();
       gl.setSize(width, height);
       // Cancel animation loop when done transitioning
@@ -61,7 +66,7 @@ function Resizer({ canvasRef }) {
         frameRef.current = null;
       }
     }
-  }, [resize, transition]);
+  }, [resize, transition, canvasRef, gl]);
 
   return <></>
 }
@@ -76,14 +81,21 @@ function Canvas() {
       if (rootRef.current) return;
       const root = createRoot(canvasRef.current)
       await root.configure({ events, camera: { position: [0, 0, 5], fov: 75 } });
-      const width = canvasRef.current.parentElement.clientWidth;
-      const height = canvasRef.current.parentElement.clientHeight;
-      window.addEventListener('resize', () => {
-        root.configure({ size: { width, height } });
-      });
+
+      const resize = () => {
+        if (!canvasRef?.current) return;
+        const width = (canvasRef.current as HTMLElement)?.parentElement?.clientWidth || 0;
+        const height = (canvasRef.current as HTMLElement)?.parentElement?.clientHeight || 0;
+        root.configure({ size: { width, height, top: 0, left: 0 } });
+      };
+
+      window.addEventListener('resize', () => resize());
+      resize();
 
       root.render(
-        <Scene canvasRef={canvasRef} />
+        <>
+          {canvasRef && <Scene canvasRef={canvasRef} />}
+        </>
       )
       rootRef.current = root;
 
@@ -102,7 +114,9 @@ function Canvas() {
   );
 }
 
-function Scene({ color, canvasRef }: { color: string }) {
+function Scene({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> }) {
+  const { color } = useAppStore();
+
   return (
     <>
       <Resizer canvasRef={canvasRef} />
