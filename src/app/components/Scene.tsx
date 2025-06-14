@@ -45,6 +45,8 @@ function Resizer({ canvasRef }) {
     if (transition) {
       frameRef.current = requestAnimationFrame(resize);
     } else {
+      const { width, height } = canvasRef.current.getBoundingClientRect();
+      gl.setSize(width, height);
       // Cancel animation loop when done transitioning
       if (frameRef.current !== null) {
         cancelAnimationFrame(frameRef.current)
