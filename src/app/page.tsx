@@ -1,13 +1,12 @@
 'use client'
 
-import { useEffect } from "react";
 import { OutPortal } from 'react-reverse-portal'
 import { motion } from 'framer-motion';
-import { useAppContext } from "@/app/context";
+import { useAppStore } from "@/app/store";
 import { ColorOption, ColorValue } from './types';
 
 export default function Home() {
-  const { portalNode, color: selectedColor, setColor, setTransition } = useAppContext();
+  const { portalNode, color: selectedColor, setColor, setTransition } = useAppStore();
 
   const colors: ColorOption[] = [
     { value: 'blue', label: 'Blue', color: 'bg-blue-500' },
@@ -24,11 +23,11 @@ export default function Home() {
         <motion.div
           className="w-64 h-64 rounded-lg overflow-hidden"
           layoutId="canvas"
-          transition={{ duration: 14 }}
+          transition={{ duration: 0.4 }}
           onLayoutAnimationStart={() => setTransition(true)}
           onLayoutAnimationComplete={() => setTransition(false)}
         >
-          <OutPortal node={portalNode} />
+          {portalNode && <OutPortal node={portalNode} />}
         </motion.div>
         <div className="p-8 border rounded-2xl h-auto self-start">
           <h2 className="text-xl">Controls</h2>

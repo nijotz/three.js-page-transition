@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useFrame, useThree, createRoot, events, extend } from '@react-three/fiber';
 import { Mesh, PerspectiveCamera } from 'three';
 import * as THREE from 'three'
-import { AppContextProvider, useAppContext } from '../context';
+import { useAppStore } from '@/app/store';
 extend(THREE);
 
 function RotatingCube({ color }: { color: string }) {
@@ -26,31 +26,23 @@ function RotatingCube({ color }: { color: string }) {
 }
 
 function Resizer({ canvasRef }) {
-  const { transition } = useAppContext();
+  const { transition } = useAppStore();
   const { gl, camera } = useThree();
   const frameRef = useRef<number | null>(null);
-  console.log('transitioning', transition)
-  console.log('canvasRef', canvasRef)
 
   const resize = useCallback(() => {
     if (!canvasRef.current) return;
-    console.log('gl', gl);
     const parent = canvasRef.current.parentElement;
-    console.log('parent', parent);
     const { width, height } = parent.getBoundingClientRect();
-    console.log('width', width);
     (camera as PerspectiveCamera).aspect = width / height;
     camera.updateProjectionMatrix();
     canvasRef.current.style.width = "100%";
     canvasRef.current.style.height = "100%";
-    console.log('canvasRef style', canvasRef.current.style);
     frameRef.current = requestAnimationFrame(resize);
   }, [transition]);
 
   useEffect(() => {
-    if (true) {
-      console.log('transitioning useEffect', transition)
-      console.log('start resizing')
+    if (transition) {
       frameRef.current = requestAnimationFrame(resize);
     } else {
       // Cancel animation loop when done transitioning
@@ -89,9 +81,7 @@ function Canvas() {
       });
 
       root.render(
-        <AppContextProvider>
-          <Scene canvasRef={canvasRef} />
-        </AppContextProvider>
+        <Scene canvasRef={canvasRef} />
       )
       rootRef.current = root;
 

@@ -1,8 +1,9 @@
 'use client'
 
 import { Geist, Geist_Mono } from "next/font/google";
+import { useEffect } from "react";
 import { InPortal } from 'react-reverse-portal'
-import { useAppContext, AppContextProvider } from "@/app/context";
+import { useAppStore } from "@/app/store";
 import Toolbar from "@/app/components/Toolbar";
 import Canvas from '@/app/components/Scene';
 import "./globals.css";
@@ -22,35 +23,29 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { initPortal, portalNode } = useAppStore();
+
+  useEffect(() => {
+    initPortal();
+  }, [initPortal]);
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AppContextProvider>
-          <App>
-            {children}
-          </App>
-        </AppContextProvider>
+        <Toolbar />
+
+        {portalNode &&
+          <InPortal node={portalNode}>
+            <Canvas />
+          </InPortal>
+        }
+
+        <main className="h-[calc(100vh-4rem)]">
+          {children}
+        </main>
       </body>
     </html>
-  );
-}
-
-function App({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { color, portalNode } = useAppContext();
-
-  return (
-    <>
-      <Toolbar />
-
-      <InPortal node={portalNode}>
-        <Canvas />
-      </InPortal>
-
-      <main className="h-[calc(100vh-4rem)]">
-        {children}
-      </main>
-    </>
   );
 }

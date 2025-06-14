@@ -1,11 +1,11 @@
 'use client';
 
 import { OutPortal } from 'react-reverse-portal'
-import { useAppContext } from "@/app/context";
+import { useAppStore } from "@/app/store";
 import { motion } from 'framer-motion';
 
 export default function Sub() {
-  const { portalNode, setTransition } = useAppContext();
+  const { portalNode, setTransition } = useAppStore();
 
   return (
     <div className="flex flex-col h-full">
@@ -16,11 +16,11 @@ export default function Sub() {
         <motion.div
           className="flex-grow bg-gray-100 overflow-hidden"
           layoutId="canvas"
-          transition={{ duration: 14 }}
+          transition={{ duration: 0.4 }}
           onLayoutAnimationStart={() => setTransition(true)}
           onLayoutAnimationComplete={() => setTransition(false)}
         >
-          <OutPortal node={portalNode} />
+          {portalNode && <OutPortal node={portalNode} />}
         </motion.div>
       </div>
     </div>
