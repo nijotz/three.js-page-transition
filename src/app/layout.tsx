@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { InPortal } from 'react-reverse-portal'
 import { useAppContext, AppContextProvider } from "@/app/context";
 import Toolbar from "@/app/components/Toolbar";
-import Scene from '@/app/components/Scene';
+import Canvas from '@/app/components/Scene';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,7 +45,7 @@ function App({ children }: Readonly<{ children: React.ReactNode }>) {
       <Toolbar />
 
       <InPortal node={portalNode}>
-        <Scene color={color} />
+        <Canvas />
       </InPortal>
 
       <main className="h-[calc(100vh-4rem)]">

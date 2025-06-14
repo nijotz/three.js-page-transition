@@ -1,9 +1,11 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
-import { useAppContext } from "@/app/context";
+import { useFrame, useThree, createRoot, events, extend } from '@react-three/fiber';
+import { Mesh, PerspectiveCamera } from 'three';
+import * as THREE from 'three'
+import { AppContextProvider, useAppContext } from '../context';
+extend(THREE);
 
 function RotatingCube({ color }: { color: string }) {
   const meshRef = useRef<Mesh>(null);
@@ -23,37 +25,33 @@ function RotatingCube({ color }: { color: string }) {
   );
 }
 
-function Scene({ color }: { color: string }) {
-  const canvasRef = useRef(null);
+function Resizer({ canvasRef }) {
   const { transition } = useAppContext();
+  const { gl, camera } = useThree();
   const frameRef = useRef<number | null>(null);
-  const sizeRef = useRef("100%");
+  console.log('transitioning', transition)
+  console.log('canvasRef', canvasRef)
 
-  // I can't find a way to trigger resizing the canvas with react-three-fiber.
-  // It uses react-use-measure which uses a ResizeObserver. I was trying to
-  // programmatically have the Canvas resize during framer motion transitions,
-  // but nothing worked. So I'm triggering a re-render by slightly changing the
-  // size of the element...
-  const jiggle = useCallback(() => {
-    if (!canvasRef?.current) return null
-    const elem = canvasRef.current as HTMLCanvasElement;
-
-    if (sizeRef.current === "100%") {
-      sizeRef.current = "100.01%";
-    } else {
-      sizeRef.current = "100%";
-    }
-
-    elem.style.width = sizeRef.current;
-    elem.style.height = sizeRef.current;
-
-    frameRef.current = requestAnimationFrame(jiggle);
-  }, []);
+  const resize = useCallback(() => {
+    if (!canvasRef.current) return;
+    console.log('gl', gl);
+    const parent = canvasRef.current.parentElement;
+    console.log('parent', parent);
+    const { width, height } = parent.getBoundingClientRect();
+    console.log('width', width);
+    (camera as PerspectiveCamera).aspect = width / height;
+    camera.updateProjectionMatrix();
+    canvasRef.current.style.width = "100%";
+    canvasRef.current.style.height = "100%";
+    console.log('canvasRef style', canvasRef.current.style);
+    frameRef.current = requestAnimationFrame(resize);
+  }, [transition]);
 
   useEffect(() => {
-    if (transition) {
-      // Start animation loop when transitioning
-      frameRef.current = requestAnimationFrame(jiggle);
+    if (true) {
+      console.log('transitioning useEffect', transition)
+      console.log('start resizing')
+      frameRef.current = requestAnimationFrame(resize);
     } else {
       // Cancel animation loop when done transitioning
       if (frameRef.current !== null) {
@@ -69,16 +67,59 @@ function Scene({ color }: { color: string }) {
         frameRef.current = null;
       }
     }
-  }, [jiggle, transition]);
+  }, [resize, transition]);
+
+  return <></>
+}
+
+function Canvas() {
+  const canvasRef = useRef(null);
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    async function load() {
+      if (!canvasRef?.current) return;
+      if (rootRef.current) return;
+      const root = createRoot(canvasRef.current)
+      await root.configure({ events, camera: { position: [0, 0, 5], fov: 75 } });
+      const width = canvasRef.current.parentElement.clientWidth;
+      const height = canvasRef.current.parentElement.clientHeight;
+      window.addEventListener('resize', () => {
+        root.configure({ size: { width, height } });
+      });
+
+      root.render(
+        <AppContextProvider>
+          <Scene canvasRef={canvasRef} />
+        </AppContextProvider>
+      )
+      rootRef.current = root;
+
+      return () => {
+        root.unmount();
+        rootRef.current = null;
+      };
+    }
+
+    void load();
+  }, [canvasRef]);
 
   return (
-    <Canvas ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }}>
+    <canvas ref={canvasRef}>
+    </canvas>
+  );
+}
+
+function Scene({ color, canvasRef }: { color: string }) {
+  return (
+    <>
+      <Resizer canvasRef={canvasRef} />
       <color attach="background" args={['lightgray']} />
       <ambientLight intensity={0.5} />
       <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
       <RotatingCube color={color} />
-    </Canvas>
+    </>
   );
 }
 
-export default Scene;
+export default Canvas;

@@ -12,11 +12,11 @@ export default function Sub() {
       <div className="text-left p-8">
         <h1 className="text-4xl font-bold text-gray-900">Sub Page</h1>
       </div>
-      <div className="flex-1 flex">
+      <div className="flex-grow min-h-0 flex">
         <motion.div
           className="flex-grow bg-gray-100 overflow-hidden"
           layoutId="canvas"
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 14 }}
           onLayoutAnimationStart={() => setTransition(true)}
           onLayoutAnimationComplete={() => setTransition(false)}
         >

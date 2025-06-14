@@ -22,9 +22,9 @@ export default function Home() {
       </div>
       <div className="flex-grow min-h-0 overflow-auto flex p-8 gap-8">
         <motion.div
-          className="flex-grow rounded-lg overflow-hidden"
+          className="w-64 h-64 rounded-lg overflow-hidden"
           layoutId="canvas"
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 14 }}
           onLayoutAnimationStart={() => setTransition(true)}
           onLayoutAnimationComplete={() => setTransition(false)}
         >
