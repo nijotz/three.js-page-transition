@@ -1,14 +1,13 @@
 'use client'
 
-import { useMemo } from 'react';
 import { create } from 'zustand';
 import { createHtmlPortalNode, HtmlPortalNode } from 'react-reverse-portal';
-import { ColorValue } from './types';
+import { ColorValue, Cube } from '@/app/types';
 
 interface AppStore {
   portalNode: HtmlPortalNode | null;
-  color: ColorValue;
-  setColor: (color: ColorValue) => void;
+  cubes: Cube[],
+  updateCubes: (id: number, color: ColorValue) => void;
   transition: boolean;
   setTransition: (arg0: boolean) => void;
 }
@@ -19,8 +18,14 @@ export const useAppStore = create<AppStore>(set => ({
     const node = createHtmlPortalNode({ attributes: { class: "h-full w-full" } });
     set({ portalNode: node });
   },
-  color: 'blue',
-  setColor: (color) => set({ color }),
+  cubes: [
+    { id: 1, color: 'blue' },
+    { id: 2, color: 'blue' },
+    { id: 3, color: 'blue' },
+  ],
+  updateCubes: (id: number, color: ColorValue): void => set((state: AppStore): { cubes: Cube[] } => ({
+    cubes: state.cubes.map((cube: Cube): Cube => cube.id === id ? { id, color } : cube)
+  })),
   transition: false,
   setTransition: (transition) => set({ transition }),
 }))

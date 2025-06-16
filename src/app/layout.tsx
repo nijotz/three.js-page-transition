@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { InPortal } from 'react-reverse-portal'
 import { useAppStore } from "@/app/store";
 import Toolbar from "@/app/components/Toolbar";
-import Canvas from '@/app/components/Scene';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,7 +37,6 @@ export default function RootLayout({
 
         {portalNode &&
           <InPortal node={portalNode}>
-            <Canvas />
           </InPortal>
         }
 

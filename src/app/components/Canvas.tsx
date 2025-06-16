@@ -71,7 +71,17 @@ function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> 
   return <></>
 }
 
-function Canvas() {
+const Scene = ({ canvasRef, color }: { canvasRef: React.RefObject<HTMLCanvasElement> }) => (
+  <>
+    <Resizer canvasRef={canvasRef} />
+    <color attach="background" args={['lightgray']} />
+    <ambientLight intensity={0.5} />
+    <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
+    <RotatingCube color={color} />
+  </>
+);
+
+function Canvas({ color }) {
   const canvasRef = useRef(null);
   const rootRef = useRef(null);
 
@@ -94,7 +104,7 @@ function Canvas() {
 
       root.render(
         <>
-          {canvasRef && <Scene canvasRef={canvasRef} />}
+          {canvasRef && <Scene canvasRef={canvasRef} color={color} />}
         </>
       )
       rootRef.current = root;
@@ -106,25 +116,21 @@ function Canvas() {
     }
 
     void load();
-  }, [canvasRef]);
+  }, []);
+
+  useEffect(() => {
+    if (!rootRef.current) return;
+    const root = rootRef.current;
+    root.render(
+      <>
+        {canvasRef && <Scene canvasRef={canvasRef} color={color} />}
+      </>
+    )
+  }, [color])
 
   return (
     <canvas ref={canvasRef}>
     </canvas>
-  );
-}
-
-function Scene({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> }) {
-  const { color } = useAppStore();
-
-  return (
-    <>
-      <Resizer canvasRef={canvasRef} />
-      <color attach="background" args={['lightgray']} />
-      <ambientLight intensity={0.5} />
-      <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
-      <RotatingCube color={color} />
-    </>
   );
 }
 
