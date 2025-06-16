@@ -1,12 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
-import { useFrame, useThree, createRoot, events, extend } from '@react-three/fiber';
+import { Canvas as R3FCanvas, useFrame, useThree } from '@react-three/fiber';
 import { Mesh, PerspectiveCamera } from 'three';
-import * as THREE from 'three'
 import { useAppStore } from '@/app/store';
-
-extend(THREE);
 
 function RotatingCube({ color }: { color: string }) {
   const meshRef = useRef<Mesh>(null);
@@ -26,7 +23,7 @@ function RotatingCube({ color }: { color: string }) {
   );
 }
 
-function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> | null }) {
+function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement | null> }) {
   const { transition } = useAppStore();
   const { gl, camera } = useThree();
   const frameRef = useRef<number | null>(null);
@@ -40,8 +37,10 @@ function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> 
     const { width, height } = parent.getBoundingClientRect();
     (camera as PerspectiveCamera).aspect = width / height;
     camera.updateProjectionMatrix();
+
     canvasRef.current.style.width = "100%";
     canvasRef.current.style.height = "100%";
+
     frameRef.current = requestAnimationFrame(resize);
   }, [camera, canvasRef]);
 
@@ -71,66 +70,17 @@ function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement> 
   return <></>
 }
 
-const Scene = ({ canvasRef, color }: { canvasRef: React.RefObject<HTMLCanvasElement> }) => (
-  <>
-    <Resizer canvasRef={canvasRef} />
-    <color attach="background" args={['lightgray']} />
-    <ambientLight intensity={0.5} />
-    <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
-    <RotatingCube color={color} />
-  </>
-);
-
-function Canvas({ color }) {
-  const canvasRef = useRef(null);
-  const rootRef = useRef(null);
-
-  useEffect(() => {
-    async function load() {
-      if (!canvasRef?.current) return;
-      if (rootRef.current) return;
-      const root = createRoot(canvasRef.current)
-      await root.configure({ events, camera: { position: [0, 0, 5], fov: 75 } });
-
-      const resize = () => {
-        if (!canvasRef?.current) return;
-        const width = (canvasRef.current as HTMLElement)?.parentElement?.clientWidth || 0;
-        const height = (canvasRef.current as HTMLElement)?.parentElement?.clientHeight || 0;
-        root.configure({ size: { width, height, top: 0, left: 0 } });
-      };
-
-      window.addEventListener('resize', () => resize());
-      resize();
-
-      root.render(
-        <>
-          {canvasRef && <Scene canvasRef={canvasRef} color={color} />}
-        </>
-      )
-      rootRef.current = root;
-
-      return () => {
-        root.unmount();
-        rootRef.current = null;
-      };
-    }
-
-    void load();
-  }, []);
-
-  useEffect(() => {
-    if (!rootRef.current) return;
-    const root = rootRef.current;
-    root.render(
-      <>
-        {canvasRef && <Scene canvasRef={canvasRef} color={color} />}
-      </>
-    )
-  }, [color])
+const Canvas = ({ color }: { color: string }) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   return (
-    <canvas ref={canvasRef}>
-    </canvas>
+    <R3FCanvas style={{ overflow: "visible" }} ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }}>
+      <Resizer canvasRef={canvasRef} />
+      <color attach="background" args={['lightgray']} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
+      <RotatingCube color={color} />
+    </R3FCanvas>
   );
 }
 

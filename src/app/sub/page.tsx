@@ -1,11 +1,13 @@
 'use client';
 
-import { OutPortal } from 'react-reverse-portal'
+import { motion } from "framer-motion";
+import { OutPortal } from "react-reverse-portal";
 import { useAppStore } from "@/app/store";
-import { motion } from 'framer-motion';
 
 export default function Sub() {
-  const { portalNode, setTransition } = useAppStore();
+  const { selectedCube, setTransition } = useAppStore();
+
+  if (!selectedCube) return <></>
 
   return (
     <div className="flex flex-col h-full">
@@ -14,13 +16,14 @@ export default function Sub() {
       </div>
       <div className="flex-grow min-h-0 flex">
         <motion.div
-          className="flex-grow bg-gray-100 overflow-hidden"
-          layoutId="canvas"
+          className="flex-grow"
+          key={selectedCube.id}
+          layoutId={`canvas-${selectedCube.id}`}
           transition={{ duration: 0.4 }}
           onLayoutAnimationStart={() => setTransition(true)}
           onLayoutAnimationComplete={() => setTransition(false)}
         >
-          {portalNode && <OutPortal node={portalNode} />}
+          {selectedCube && <OutPortal node={selectedCube.portalNode} />}
         </motion.div>
       </div>
     </div>

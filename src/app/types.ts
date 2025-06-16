@@ -1,3 +1,5 @@
+import { HtmlPortalNode } from 'react-reverse-portal';
+
 export type ColorValue = 'blue' | 'green' | 'purple';
 
 export interface ColorOption {
@@ -9,4 +11,5 @@ export interface ColorOption {
 export interface Cube {
   id: number;
   color: ColorValue;
+  portalNode: HtmlPortalNode;
 }

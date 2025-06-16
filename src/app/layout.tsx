@@ -2,9 +2,10 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect } from "react";
-import { InPortal } from 'react-reverse-portal'
+import { createHtmlPortalNode } from 'react-reverse-portal'
 import { useAppStore } from "@/app/store";
 import Toolbar from "@/app/components/Toolbar";
+import CanvasSelector from "@/app/components/CanvasSelector";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,11 +23,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { initPortal, portalNode } = useAppStore();
+  const { setCubes } = useAppStore();
 
   useEffect(() => {
-    initPortal();
-  }, [initPortal]);
+    const cubes = [1,2,3].map((i) => ({
+      id: i,
+      color: 'blue',
+      portalNode: createHtmlPortalNode({ attributes: { class: "h-full w-full" } }),
+    }));
+    setCubes(cubes);
+  }, []);
 
   return (
     <html lang="en">
@@ -34,12 +40,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toolbar />
-
-        {portalNode &&
-          <InPortal node={portalNode}>
-          </InPortal>
-        }
-
+        <CanvasSelector />
         <main className="h-[calc(100vh-4rem)]">
           {children}
         </main>
