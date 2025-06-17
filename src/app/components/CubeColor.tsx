@@ -24,7 +24,7 @@ const CubeColor = ({
   handleSelect: () => void,
   portalNode: HtmlPortalNode,
 }) => {
-  const { setTransition } = useAppStore();
+  const { transition, setTransition } = useAppStore();
 
   return (
     <div className={`flex flex-col items-center p-2`} onClick={handleSelect} >
@@ -32,12 +32,12 @@ const CubeColor = ({
         <div className="w-64 h-64 rounded-lg">
           <motion.div
             key={id}
-            className="h-full w-full motion"
+            className={`h-full w-full ${transition === id && "z-10"}`}
             layoutId={`canvas-${id}`}
             layout
             transition={{ duration: 0.4 }}
-            onLayoutAnimationStart={() => setTransition(true)}
-            onLayoutAnimationComplete={() => setTransition(false)}
+            onLayoutAnimationStart={() => setTransition(id)}
+            onLayoutAnimationComplete={() => setTransition(null)}
           >
             {portalNode && <OutPortal node={portalNode} />}
           </motion.div>

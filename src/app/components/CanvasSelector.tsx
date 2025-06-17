@@ -5,13 +5,13 @@ import { Cube } from "@/app/types";
 import Canvas from "@/app/components/Canvas";
 
 const CanvasSelector = () => {
-  const { cubes } = useAppStore();
+  const { cubes, transition } = useAppStore();
 
   return (
     <>
       {cubes.map((cube: Cube): ReactNode => (
         <InPortal key={cube.id} node={cube.portalNode}>
-          <Canvas cube={cube} />
+          <Canvas cube={cube} transition={transition} />
         </InPortal>
       ))}
     </>

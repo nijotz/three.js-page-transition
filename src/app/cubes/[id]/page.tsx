@@ -7,7 +7,7 @@ import { useAppStore } from "@/app/store";
 import { Cube } from "@/app/types";
 
 export default function CubePage() {
-  const { cubes, setTransition } = useAppStore();
+  const { cubes, transition, setTransition } = useAppStore();
 
   const params = useParams();
   const id = Number(params.id);
@@ -22,12 +22,12 @@ export default function CubePage() {
       </div>
       <div className="flex-grow min-h-0 flex">
         <motion.div
-          className="flex-grow"
+          className={`flex-grow ${transition === cube.id && "z-10"}`}
           key={cube.id}
           layoutId={`canvas-${cube.id}`}
           transition={{ duration: 0.4 }}
-          onLayoutAnimationStart={() => setTransition(true)}
-          onLayoutAnimationComplete={() => setTransition(false)}
+          onLayoutAnimationStart={() => setTransition(cube.id)}
+          onLayoutAnimationComplete={() => setTransition(null)}
         >
           <OutPortal node={cube.portalNode} />
         </motion.div>

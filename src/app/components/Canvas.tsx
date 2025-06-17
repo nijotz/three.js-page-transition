@@ -27,8 +27,19 @@ function RotatingCube({ cube }: { cube: Cube }) {
 
 function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement | null> }) {
   const { transition } = useAppStore();
-  const { gl, camera } = useThree();
+  const { gl, camera, invalidate } = useThree();
   const frameRef = useRef<number | null>(null);
+
+  useFrame(({ gl, scene, camera }) => {
+    gl.clear();
+    gl.clearDepth();
+    gl.render(scene, camera);
+  });
+
+  // Call this when you want to render one frame
+  useEffect(() => {
+    invalidate(); // triggers one render
+  }, [invalidate]);
 
   const resize = useCallback(() => {
     if (!canvasRef?.current) return;
@@ -72,13 +83,18 @@ function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement |
   return <></>
 }
 
-const Canvas = ({ cube }: { cube: Cube }) => {
+const Canvas = ({ cube, transition }: { cube: Cube, transition: number | null }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   return (
-    <R3FCanvas style={{ overflow: "visible" }} ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }}>
+    <R3FCanvas
+      ref={canvasRef}
+      {...(transition && !(cube.id === transition)) && { frameloop: "never" }}
+      style={{ overflow: "visible" }}
+      camera={{ position: [0, 0, 5], fov: 75 }}
+    >
       <Resizer canvasRef={canvasRef} />
-      <color attach="background" args={["lightgray"]} />
+      <color attach="background" args={[cube.color]} />
       <ambientLight intensity={0.5} />
       <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
       <RotatingCube cube={cube} />

@@ -7,8 +7,8 @@ interface AppStore {
   cubes: Cube[],
   setCubes: (cubes: Cube[]) => void;
   updateCubes: (id: number, color: ColorValue) => void;
-  transition: boolean;
-  setTransition: (transition: boolean) => void;
+  transition: number | null;
+  setTransition: (transition: number | null) => void;
   selectedCube: Cube | null;
   setSelectedCube: (id: number) => void;
 }
@@ -19,8 +19,8 @@ export const useAppStore = create<AppStore>(set => ({
   updateCubes: (id: number, color: ColorValue): void => set((state: AppStore): { cubes: Cube[] } => ({
     cubes: state.cubes.map((cube: Cube): Cube => cube.id === id ? { ...cube, color } : cube)
   })),
-  transition: false,
-  setTransition: (transition: boolean): void => set({ transition }),
+  transition: null,
+  setTransition: (transition: number | null): void => set({ transition }),
   selectedCube: null,
   setSelectedCube: (selectedCubeId: number): void => set((state: AppStore): { selectedCube: Cube | undefined } =>
     ({ selectedCube: state.cubes.find((cube: Cube): boolean => cube.id === selectedCubeId) })),
