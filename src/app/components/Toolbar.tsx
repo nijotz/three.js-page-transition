@@ -3,9 +3,10 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppStore } from '@/app/store';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Toolbar() {
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
   const { cubes, selectedCube, setSelectedCube } = useAppStore();
@@ -17,9 +18,31 @@ export default function Toolbar() {
     router.push(`/cubes/${id}`);
   };
 
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+
   return (
     <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
@@ -56,7 +79,7 @@ export default function Toolbar() {
                   </svg>
                 </button>
                 {isDropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div ref={dropdownRef} className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                     <div className="py-1" role="menu" aria-orientation="vertical">
                       {cubes.map((cube) => (
                         <button
