@@ -1,24 +1,26 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef } from 'react';
-import { Canvas as R3FCanvas, useFrame, useThree } from '@react-three/fiber';
-import { Mesh, PerspectiveCamera } from 'three';
-import { useAppStore } from '@/app/store';
+import { useCallback, useEffect, useRef } from "react";
+import { Canvas as R3FCanvas, useFrame, useThree } from "@react-three/fiber";
+import { Mesh, PerspectiveCamera } from "three";
+import { useAppStore } from "@/app/store";
+import { Colors, Cube } from "@/app/types";
 
-function RotatingCube({ color }: { color: string }) {
+function RotatingCube({ cube }: { cube: Cube }) {
   const meshRef = useRef<Mesh>(null);
+  const rotationModifier = (Colors.indexOf(cube.color) + 1) / 50.0;
 
   useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += delta * 0.5;
-      meshRef.current.rotation.y += delta * 0.2;
+      meshRef.current.rotation.x += delta * 15 * rotationModifier;
+      meshRef.current.rotation.y += delta * 12 * rotationModifier;
     }
   });
 
   return (
     <mesh ref={meshRef}>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={color || "#4f46e5"} />
+      <meshStandardMaterial color={cube.color || "#4f46e5"} />
     </mesh>
   );
 }
@@ -70,16 +72,16 @@ function Resizer({ canvasRef }: { canvasRef: React.RefObject<HTMLCanvasElement |
   return <></>
 }
 
-const Canvas = ({ color }: { color: string }) => {
+const Canvas = ({ cube }: { cube: Cube }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   return (
     <R3FCanvas style={{ overflow: "visible" }} ref={canvasRef} camera={{ position: [0, 0, 5], fov: 75 }}>
       <Resizer canvasRef={canvasRef} />
-      <color attach="background" args={['lightgray']} />
+      <color attach="background" args={["lightgray"]} />
       <ambientLight intensity={0.5} />
       <pointLight position={[-5, 5, 10]} intensity={2} distance={100} decay={0} color="white" />
-      <RotatingCube color={color} />
+      <RotatingCube cube={cube} />
     </R3FCanvas>
   );
 }

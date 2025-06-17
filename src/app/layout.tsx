@@ -6,6 +6,7 @@ import { createHtmlPortalNode } from 'react-reverse-portal'
 import { useAppStore } from "@/app/store";
 import Toolbar from "@/app/components/Toolbar";
 import CanvasSelector from "@/app/components/CanvasSelector";
+import { Colors, Cube } from "@/app/types";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,11 +29,11 @@ export default function RootLayout({
   useEffect(() => {
     const cubes = [1, 2, 3].map((i) => ({
       id: i,
-      color: ['blue', 'green', 'purple'][i - 1],
+      color: Colors[i - 1],
       portalNode: createHtmlPortalNode({ attributes: { class: "h-full w-full" } }),
-    }));
+    } as Cube));
     setCubes(cubes);
-  }, []);
+  }, [setCubes]);
 
   return (
     <html lang="en">

@@ -11,7 +11,7 @@ const CanvasSelector = () => {
     <>
       {cubes.map((cube: Cube): ReactNode => (
         <InPortal key={cube.id} node={cube.portalNode}>
-          <Canvas color={cube.color} />
+          <Canvas cube={cube} />
         </InPortal>
       ))}
     </>
