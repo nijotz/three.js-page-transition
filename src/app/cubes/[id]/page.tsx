@@ -1,29 +1,35 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import { motion } from "framer-motion";
 import { OutPortal } from "react-reverse-portal";
 import { useAppStore } from "@/app/store";
+import { Cube } from "@/app/types";
 
-export default function Sub() {
-  const { selectedCube, setTransition } = useAppStore();
+export default function CubePage() {
+  const { cubes, setTransition } = useAppStore();
 
-  if (!selectedCube) return <></>
+  const params = useParams();
+  const id = Number(params.id);
+  const cube = cubes.find((c: Cube): boolean => c.id === id);
+
+  if (!cube) return <></>
 
   return (
     <div className="flex flex-col h-full">
       <div className="text-left p-8">
-        <h1 className="text-4xl font-bold text-gray-900">Sub Page</h1>
+        <h1 className="text-4xl font-bold text-gray-900">Cube</h1>
       </div>
       <div className="flex-grow min-h-0 flex">
         <motion.div
           className="flex-grow"
-          key={selectedCube.id}
-          layoutId={`canvas-${selectedCube.id}`}
+          key={cube.id}
+          layoutId={`canvas-${cube.id}`}
           transition={{ duration: 0.4 }}
           onLayoutAnimationStart={() => setTransition(true)}
           onLayoutAnimationComplete={() => setTransition(false)}
         >
-          {selectedCube && <OutPortal node={selectedCube.portalNode} />}
+          <OutPortal node={cube.portalNode} />
         </motion.div>
       </div>
     </div>

@@ -14,7 +14,7 @@ export default function Home() {
   }
 
   const handleAction = (id: number): void => {
-    router.push('/sub');
+    router.push(`/cubes/${id}`);
   }
 
   return (

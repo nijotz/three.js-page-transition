@@ -26,9 +26,9 @@ export default function RootLayout({
   const { setCubes } = useAppStore();
 
   useEffect(() => {
-    const cubes = [1,2,3].map((i) => ({
+    const cubes = [1, 2, 3].map((i) => ({
       id: i,
-      color: 'blue',
+      color: ['blue', 'green', 'purple'][i - 1],
       portalNode: createHtmlPortalNode({ attributes: { class: "h-full w-full" } }),
     }));
     setCubes(cubes);
