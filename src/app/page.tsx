@@ -28,7 +28,6 @@ export default function Home() {
             key={cube.id}
             id={cube.id}
             color={cube.color}
-            selected={cube.id === selectedCube?.id}
             handleSelect={() => handleSelect(cube.id)}
             handleAction={() => handleAction(cube.id)}
             setColor={(color: ColorValue): void => updateCubes(cube.id, color)}

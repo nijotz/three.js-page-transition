@@ -11,7 +11,6 @@ const colors: ColorOption[] = [
 
 const CubeColor = ({
   id,
-  selected,
   color: selectedColor,
   setColor,
   handleAction,
@@ -19,7 +18,6 @@ const CubeColor = ({
   portalNode
 }: {
   id: number,
-  selected: boolean,
   color: ColorValue,
   setColor: (color: ColorValue) => void,
   handleAction: () => void,
@@ -29,7 +27,7 @@ const CubeColor = ({
   const { setTransition } = useAppStore();
 
   return (
-    <div className={`flex flex-col items-center p-2 border rounded ${selected ? "border-blue-600" : "border-white"}`} onClick={handleSelect} >
+    <div className={`flex flex-col items-center p-2`} onClick={handleSelect} >
       <div className="flex-grow min-h-0 flex p-4 gap-4 items-center">
         <div className="w-64 h-64 rounded-lg">
           <motion.div
@@ -68,8 +66,7 @@ const CubeColor = ({
 
       <div>
         <button
-          className={`outline rounded px-4 py-2 text-white cursor-pointer ${selected ? "bg-blue-500" : "bg-gray-600"}`}
-          disabled={!selected}
+          className="outline rounded px-4 py-2 text-white cursor-pointer bg-blue-500"
           onClick={handleAction}
         >
           Select
