@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Live Demo
+
+See it in action: https://nijotz.github.io/three.js-page-transition/
+
+The site is a static export deployed to GitHub Pages automatically on every push
+to `main` via the workflow in `.github/workflows/deploy.yml`.
+
 ## Getting Started
 
 First, run the development server:

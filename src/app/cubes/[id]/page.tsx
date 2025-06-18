@@ -1,37 +1,11 @@
-'use client';
+import CubePage from './CubePage';
 
-import { useParams } from 'next/navigation';
-import { motion } from "framer-motion";
-import { OutPortal } from "react-reverse-portal";
-import { useAppStore } from "@/app/store";
-import { Cube } from "@/app/types";
+// The cubes are hard-coded to ids 1, 2 and 3 in the root layout, so emit a
+// static page for each when exporting for GitHub Pages.
+export function generateStaticParams() {
+  return [{ id: '1' }, { id: '2' }, { id: '3' }];
+}
 
-export default function CubePage() {
-  const { cubes, setTransition } = useAppStore();
-
-  const params = useParams();
-  const id = Number(params.id);
-  const cube = cubes.find((c: Cube): boolean => c.id === id);
-
-  if (!cube) return <></>
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="text-left p-8">
-        <h1 className="text-4xl font-bold text-gray-900">Cube</h1>
-      </div>
-      <div className="flex-grow min-h-0 flex">
-        <motion.div
-          className="flex-grow"
-          key={cube.id}
-          layoutId={`canvas-${cube.id}`}
-          transition={{ duration: 0.4 }}
-          onLayoutAnimationStart={() => setTransition(true)}
-          onLayoutAnimationComplete={() => setTransition(false)}
-        >
-          <OutPortal node={cube.portalNode} />
-        </motion.div>
-      </div>
-    </div>
-  );
+export default function Page() {
+  return <CubePage />;
 }

@@ -1,40 +1,11 @@
-'use client'
+import Gallery from "@/app/components/Gallery";
 
-import { useRouter } from 'next/navigation';
-import CubeColor from "@/app/components/CubeColor";
-import { useAppStore } from "@/app/store";
-import { ColorValue, Cube } from "@/app/types";
-
-export default function Home() {
-  const { cubes, updateCubes, selectedCube, setSelectedCube } = useAppStore();
-  const router = useRouter();
-
-  const handleSelect = (id: number): void => {
-    setSelectedCube(id);
-  }
-
-  const handleAction = (id: number): void => {
-    router.push(`/cubes/${id}`);
-  }
-
-  return (
-    <div className="flex flex-col h-full px-4">
-      <div className="text-left p-8">
-        <h1 className="text-4xl font-bold text-gray-900">Home</h1>
-      </div>
-      <div className="flex">
-        {cubes.map((cube: Cube) =>
-          <CubeColor
-            key={cube.id}
-            id={cube.id}
-            color={cube.color}
-            handleSelect={() => handleSelect(cube.id)}
-            handleAction={() => handleAction(cube.id)}
-            setColor={(color: ColorValue): void => updateCubes(cube.id, color)}
-            portalNode={cube.portalNode}
-          />
-        )}
-      </div>
-    </div>
-  );
+// The toolbar links to /home, not the bare basePath root: GitHub Pages
+// 301-redirects the extension-less root (/three.js-page-transition ->
+// /three.js-page-transition/) and that redirect forces a full page reload that
+// breaks the persistent-canvas transitions. The root still renders the gallery
+// so the shared URL shows content; navigation between views always targets
+// /home and /cubes/<id>, which are flat .html files served without a redirect.
+export default function Page() {
+  return <Gallery />;
 }
